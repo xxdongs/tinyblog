@@ -2,6 +2,7 @@
   <div>
     <div class="content">
       <ArticleSimpleList
+        class="card-item"
         v-for="year in years"
         :key="year"
         :title="year.concat(' 年')"
@@ -62,5 +63,8 @@ export default {
   margin-top: 24px;
   padding-bottom: 24px;
   width: 300px;
+}
+.card-item {
+  margin-bottom: 24px;
 }
 </style>

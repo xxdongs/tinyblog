@@ -59,6 +59,9 @@ const DELETE_ARTICLE = `DELETE FROM Article
 const GET_ARTICLE_TIMELINE = `select DATE_FORMAT(created_at,'%Y') as year,id,title,views from Article order by created_at desc;`
 const GET_ARTICLES_BY_VIEWS = `SELECT id,title,views FROM Article ORDER BY views DESC LIMIT 0,?;`
 
+const SELECT_ARTICLES_BY_KEY = `SELECT id,title FROM Article WHERE LOCATE(?,title) > 0 OR LOCATE(?,content) ORDER BY created_at DESC;`
+const ADD_ARTICLE_VIEWS = `UPDATE Article set views=views+1 WHERE id=?;`
+
 class LabelModel extends Connection {
 
     static addArticle(data) {
@@ -90,11 +93,19 @@ class LabelModel extends Connection {
     }
 
     static getArticleTimeline() {
-        return super.query(GET_ARTICLE_TIMELINE,null)
+        return super.query(GET_ARTICLE_TIMELINE, null)
     }
 
     static getArticlesByViews(count) {
         return super.query(GET_ARTICLES_BY_VIEWS, [count])
+    }
+
+    static getArticlesByKey(key) {
+        return super.query(SELECT_ARTICLES_BY_KEY, [key, key])
+    }
+
+    static addViews(articleId) {
+        return super.query(ADD_ARTICLE_VIEWS, [articleId])
     }
 }
 

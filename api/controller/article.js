@@ -54,12 +54,16 @@ class ArticleController {
             ctx.status = 400
             return
         }
+
         let all = new Promise((resolve, reject) => {
             Promise.all([articleModel.getArticle(articleId),
             labelModel.getArticleLables(articleId)])
                 .then(data => resolve(data))
                 .catch(e => reject(e))
+
         })
+        await articleModel.addViews(articleId)
+
         let results = await all
         let article = results[0]
         let labels = results[1]
@@ -77,10 +81,14 @@ class ArticleController {
 
     static async getArticleList(ctx, next) {
         let label_id = ctx.request.query.label_id
+        let key = ctx.request.query.key
         let results = null
         if (label_id) {
             results = await articleModel.getArticleList(label_id)
-        } else {
+        } else if (key) {
+            results = await articleModel.getArticlesByKey(key)
+        }
+        else {
             results = await articleModel.getArticleList()
         }
         if (!results || results.length === 0) {

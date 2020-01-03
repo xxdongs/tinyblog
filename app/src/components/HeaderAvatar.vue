@@ -1,38 +1,7 @@
 <template>
   <div>
-    <!-- <a-dropdown placement="bottomRight">
+    <a-dropdown placement="bottomLeft" v-if="token">
       <a-avatar class="user-avatar" icon="user" :src="avatar"></a-avatar>
-      <a-menu slot="overlay">
-        <a-menu-item v-if="inIndex">
-          <a class="header-font-size" href="/admin">管理</a>
-        </a-menu-item>
-        <a-menu-item v-else>
-          <a class="header-font-size" href="/">主页</a>
-        </a-menu-item>
-        <a-menu-item>
-          <a @click="logout" href="/login" class="header-font-size">登出</a>
-        </a-menu-item>
-      </a-menu>
-    </a-dropdown>-->
-
-    <!-- <a-popover placement="bottom" class="user-avatar">
-      <template slot="content">
-        <a-menu @click="handleMenuClick">
-          <a-menu-item key="1" v-if="inIndex">
-            <a-icon type="user" />管理
-          </a-menu-item>
-          <a-menu-item key="2" v-else>
-            <a-icon type="user" />主页
-          </a-menu-item>
-          <a-menu-item key="3">
-            <a-icon type="user" />登出
-          </a-menu-item>
-        </a-menu>
-      </template>
-      <a-avatar icon="user" :src="avatar"></a-avatar>
-      <a-icon type="caret-down" />
-    </a-popover>-->
-    <a-dropdown>
       <a-menu slot="overlay" @click="handleMenuClick">
         <a-menu-item v-if="inIndex" key="1">
           <a-icon type="user" />管理
@@ -44,11 +13,8 @@
           <a-icon type="logout" />登出
         </a-menu-item>
       </a-menu>
-      <span>
-        <a-avatar class="user-avatar" icon="user" :src="avatar"></a-avatar>
-        <a-icon style="margin-left: 6px" type="down" />
-      </span>
     </a-dropdown>
+    <a-button @click="login" type="link" v-else>登录</a-button>
   </div>
 </template>
 
@@ -60,23 +26,25 @@ export default {
   name: "HeaderAvatar",
   created() {
     let name = this.$route.name;
-    console.log(name);
     if ("home" === name) {
       this.inIndex = true;
     } else {
       this.inIndex = false;
     }
 
-    getInfo().then(res => {
-      if (res.ok) {
-        this.avatar = res.data.avatar;
-      }
-    });
+    if (this.token) {
+      getInfo().then(res => {
+        if (res.ok) {
+          this.avatar = res.data.avatar;
+        }
+      });
+    }
   },
   data() {
     return {
       avatar: "",
-      inIndex: false
+      inIndex: false,
+      token: Token.checkToken()
     };
   },
   methods: {
@@ -93,6 +61,9 @@ export default {
         Token.removeToken();
         this.$router.push({ path: "/login" });
       }
+    },
+    login() {
+      this.$router.push({ path: "/login" });
     }
   }
 };

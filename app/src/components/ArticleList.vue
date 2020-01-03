@@ -85,7 +85,7 @@ export default {
   },
   methods: {
     async getArticleList(label_id) {
-      let res = await Article.getArticleList(label_id);
+      let res = await Article.getArticleList({ label_id });
       let ar = [];
       if (res.ok) {
         ar = res.data.results;

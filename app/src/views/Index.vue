@@ -1,43 +1,40 @@
 <template>
   <div>
-    <a-menu
-      type="flex"
-      justify="start"
-      class="header"
-      v-model="current"
-      mode="horizontal"
-      @click="handleSelect"
-    >
-      <a-menu-item key="home">
+    <a-menu class="header" v-model="current" mode="horizontal" @click="handleSelect">
+      <a-menu-item key="home" style="float: left">
         <a-icon type="home" />首页
       </a-menu-item>
-      <a-menu-item key="timeline">
+      <a-menu-item key="timeline" style="float: left">
         <a-icon type="calendar" />时间线
       </a-menu-item>
       <!-- <a-menu-item key="about">
         <a-icon type="user" />关于
       </a-menu-item>-->
-    <!-- <a-menu-item disabled> -->
-    <HeaderAvatar class="user-avatar" v-if="more"></HeaderAvatar>
-    <!-- </a-menu-item> -->
+      <Search v-if="!isPost" class="search"></Search>
+      <HeaderAvatar class="user-avatar"></HeaderAvatar>
     </a-menu>
     <router-view />
   </div>
 </template>
 
 <script>
-import { Token } from "@/store";
 import HeaderAvatar from "@/components/HeaderAvatar";
+import Search from "@/components/Search";
 
 export default {
   name: "Index",
-  components: { HeaderAvatar },
+  components: { HeaderAvatar, Search },
   created() {
-    if (this.$route.name === "home") {
+    let name = this.$route.name;
+    console.log("name " + name);
+    if (name === "post") {
+      this.isPost = true;
+    }
+    if (name === "home") {
       this.current = ["home"];
-    } else if (this.$route.name === "about") {
+    } else if (name === "about") {
       this.current = ["about"];
-    } else if (this.$route.name === "timeline") {
+    } else if (name === "timeline") {
       this.current = ["timeline"];
     }
   },
@@ -45,7 +42,7 @@ export default {
     return {
       current: ["article"],
       BLOG_NAME: process.env.VUE_APP_BLOG_NAME,
-      more: Token.checkToken(),
+      isPost: false
     };
   },
   methods: {
@@ -60,13 +57,16 @@ export default {
       let path = "";
       if ("home" === item.key) {
         path = "/";
+        this.isPost = false;
       } else if ("timeline" === item.key) {
         path = "/timeline";
+        this.isPost = false;
       } else if ("about" === item.key) {
         path = "/about";
+        this.isPost = false;
       }
       this.$router.push(path);
-    },
+    }
   }
 };
 </script>
@@ -85,5 +85,9 @@ export default {
 .user-avatar {
   float: right;
   margin-right: 36px;
+}
+.search {
+  float: left;
+  margin-left: 26px;
 }
 </style>

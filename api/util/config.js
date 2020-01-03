@@ -28,8 +28,8 @@ const Config = {
     db: {
         // Connections are lazily created by the pool, default is 10
         connectionLimit: 10,
-        host: 'db',
-        // host: '127.0.0.1',
+        // host: 'db',
+        host: '127.0.0.1',
         user: 'edgar',
         password: '1234',
         port: 3306,

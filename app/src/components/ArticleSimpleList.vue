@@ -1,20 +1,27 @@
 <template>
   <div>
-    <a-list size="small" bordered :dataSource="articles">
+    <a-list size="small" bordered :dataSource="page ? displayArticles : articles">
       <a-list-item slot="renderItem" slot-scope="item">
         <a target="_blank" :href="'/post/'.concat(item.id)">{{item.title}}</a>
         <a-badge
-          class="views-item"
           :count="item.views"
           :overflowCount="overflowCount"
           :numberStyle="{backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset'}"
         />
       </a-list-item>
-      <span slot="header">
+      <span v-if="title" slot="header">
         <a-icon :type="icon"></a-icon>
-        &nbsp;{{ title }}
+        &nbsp; {{ title }}
       </span>
     </a-list>
+    <a-pagination
+      v-if="page && articles.length > pageSize"
+      class="article-page"
+      :pageSize.sync="pageSize"
+      :defaultCurrent="currentPage"
+      :total="articles.length"
+      @change="handleCurrentChange"
+    />
   </div>
 </template>
 
@@ -31,19 +38,42 @@ export default {
     },
     icon: {
       type: String,
-      required: true
+      default: ""
+    },
+    page: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      overflowCount: 999999
+      overflowCount: 999999,
+      pageSize: 5,
+      currentPage: 1
     };
+  },
+  computed: {
+    displayArticles: function() {
+      let start = (this.currentPage - 1) * this.pageSize;
+      let offset = this.articles.length % this.pageSize;
+      let end =
+        offset === 0 || start + this.pageSize < this.articles.length
+          ? start + this.pageSize
+          : start + offset;
+      return this.articles.slice(start, end);
+    }
+  },
+  methods: {
+    handleCurrentChange(val) {
+      this.currentPage = val;
+    }
   }
 };
 </script>
 
 <style scoped>
-.views-item {
-  margin-left: 6px;
+.article-page {
+  margin-top: 24px;
+  text-align: center;
 }
 </style>
