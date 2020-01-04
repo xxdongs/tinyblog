@@ -4,7 +4,7 @@
       <a-input-search class="search" placeholder="搜索（标题或正文）" @search="onSearch" />
     </a-spin>
 
-    <a-modal v-model="dialogShow" :destroyOnClose="true">
+    <a-modal :afterClose="afterClose" v-model="dialogShow" :destroyOnClose="true">
       <div slot="footer"></div>
       <ArticleSimpleList class="list" icon="search" title="搜索结果" :page="true" :articles="data"></ArticleSimpleList>
     </a-modal>
@@ -43,6 +43,9 @@ export default {
     },
     handleOk() {
       this.dialogShow = false;
+    },
+    afterClose() {
+      
     }
   }
 };

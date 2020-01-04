@@ -9,15 +9,15 @@
       <a-list-item slot="renderItem" slot-scope="item" :key="item.id">
         <template slot="actions">
           <span>
-            <a-icon type="eye" style="margin-right: 8px" />
+            <a-icon type="eye" />
             {{item.views}}
           </span>
           <span>
-            <a-icon type="message" style="margin-right: 8px" />
+            <a-icon type="message"/>
             {{item.comment_count}}
           </span>
           <span>
-            <a-icon type="calendar" style="margin-right: 8px" />
+            <a-icon type="calendar"/>
             {{moment(item.created_at).format('YYYY年MM月DD日')}}
           </span>
           <ArticleMore v-if="inAdmin" :articleId="item.id" />

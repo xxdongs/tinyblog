@@ -101,7 +101,7 @@ export default {
       allComments: [],
       replyComments: [],
       currentPage: 1,
-      pageSize: 10,
+      pageSize: 5,
       moment,
       more: this.$route.name === "comments",
       timeStart: startDefault,

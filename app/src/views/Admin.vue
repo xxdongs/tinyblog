@@ -68,7 +68,6 @@ export default {
       this.$router.push(path);
     },
     writeArticle() {
-      console.log("write");
       this.$router.push({ name: "editor_new" });
     },
     goIndex() {

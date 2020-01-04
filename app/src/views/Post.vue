@@ -7,15 +7,15 @@
             <a-list-item>
               <template slot="actions">
                 <span>
-                  <a-icon type="eye" style="margin-right: 8px" />
+                  <a-icon type="eye" />
                   {{article.views}}
                 </span>
                 <span>
-                  <a-icon type="message" style="margin-right: 8px" />
+                  <a-icon type="message" />
                   {{article.comment_count}}
                 </span>
                 <span>
-                  <a-icon type="calendar" style="margin-right: 8px" />
+                  <a-icon type="calendar" />
                   {{moment(article.created_at).format('YYYY年MM月DD日')}}
                 </span>
                 <ArticleMore v-if="more" :articleId="articleId"></ArticleMore>
@@ -39,7 +39,7 @@
                 :scrollStyle="mdSetting.scrollStyle"
               ></mavon-editor>
             </div>
-            <SubmitComment :articleId="articleId"></SubmitComment>
+            <SubmitComment class="article-comments" :articleId="articleId"></SubmitComment>
             <Comments class="article-comments" :articleId="articleId"></Comments>
           </a-list>
         </a-layout-content>
@@ -106,9 +106,10 @@ export default {
 }
 .article-comments {
   margin-top: 20px;
+  width: 80%;
 }
 .article {
-  margin-left: 48px;
-  margin-right: 48px;
+  width: 80%;
+  margin: 0 auto;
 }
 </style>

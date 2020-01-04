@@ -3,11 +3,10 @@
     <a-list size="small" bordered :dataSource="page ? displayArticles : articles">
       <a-list-item slot="renderItem" slot-scope="item">
         <a target="_blank" :href="'/post/'.concat(item.id)">{{item.title}}</a>
-        <a-badge
-          :count="item.views"
-          :overflowCount="overflowCount"
-          :numberStyle="{backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset'}"
-        />
+        <span class="views" v-if="item.views > 0">
+          <a-icon type="eye" />
+          {{item.views}}
+        </span>
       </a-list-item>
       <span v-if="title" slot="header">
         <a-icon :type="icon"></a-icon>
@@ -47,7 +46,6 @@ export default {
   },
   data() {
     return {
-      overflowCount: 999999,
       pageSize: 5,
       currentPage: 1
     };
@@ -75,5 +73,8 @@ export default {
 .article-page {
   margin-top: 24px;
   text-align: center;
+}
+.views {
+  margin-left: 5px;
 }
 </style>

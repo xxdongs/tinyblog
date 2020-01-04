@@ -1,13 +1,13 @@
 <template>
   <div>
     <a-layout>
-      <a-layout-sider width="256" style="background: #fff">
+      <a-layout-sider width="256" style="background: #fff;">
         <LabelsBoundArticle class="my-sider" @onTagClick="onTagClick"></LabelsBoundArticle>
-        <ArticleSimpleList class="my-sider" title="热门文章" icon="tags" :articles="hotArticles"></ArticleSimpleList>
+        <ArticleSimpleList class="my-sider" title="热门文章" icon="rise" :articles="hotArticles"></ArticleSimpleList>
       </a-layout-sider>
-      <a-layout>
-        <a-layout-content style="background: #fff">
-          <ArticleList class="my-articles" :clickedLabel="clickedLabel"></ArticleList>
+      <a-layout style="background: #fff;">
+        <a-layout-content class="my-articles">
+          <ArticleList :clickedLabel="clickedLabel"></ArticleList>
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -54,8 +54,10 @@ export default {
   margin-left: 12px;
 }
 .my-articles {
-  margin-top: 12px;
+  /* margin-top: 12px;
   margin-left: 24px;
-  margin-right: 24px;
+  margin-right: 24px; */
+  width: 80%;
+  margin: 0 auto;
 }
 </style>

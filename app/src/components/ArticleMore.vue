@@ -6,7 +6,7 @@
     <span>
       <a-popconfirm title="确认删除此文章吗" @confirm="confirmDelete" okText="确认" cancelText="取消">
         <span>
-          <a-icon type="delete" style="margin-right: 8px" />
+          <a-icon type="delete" />
         </span>
       </a-popconfirm>
     </span>
