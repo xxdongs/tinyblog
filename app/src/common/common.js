@@ -3,11 +3,6 @@ import 'ant-design-vue/dist/antd.css'
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 
-export function isEmail(email) {
-    let pattern = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/
-    return pattern.test(email)
-}
-
 export function initCommon(Vue) {
     Vue.config.productionTip = false
     Vue.use(Antd)

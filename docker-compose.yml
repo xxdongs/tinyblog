@@ -11,7 +11,7 @@ services:
       context: ./app
       dockerfile: ../Dockerfile-app
     # volumes:
-    #   - ./script/nginx.conf:/etc/nginx/nginx.conf
+    #   - ../nginx-app.conf:/etc/nginx/nginx.conf
     #   - /var/log/blogback:/var/log/nginx
 
   back:
@@ -32,10 +32,10 @@ services:
     environment:
       MYSQL_DATABASE: blog
       MYSQL_USER: edgar
-      MYSQL_PASSWORD: '1234'
-      MYSQL_ROOT_PASSWORD: '1234'
+      MYSQL_PASSWORD: '1mdkm892nsa'
+      MYSQL_ROOT_PASSWORD: '1mdkm892nsa'
     ports:
       - 3306:3306
     volumes:
-      - ./api/blog.sql:/docker-entrypoint-initdb.d/blog.sql
+      - ./blog.sql:/docker-entrypoint-initdb.d/blog.sql
 #      - ~/docker/mysql/data:/var/lib/mysql

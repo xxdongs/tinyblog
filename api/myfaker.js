@@ -5,7 +5,6 @@ const commentModel = require('./model/comment')
 const { randomList } = require('./util/util')
 const moment = require('moment')
 
-
 const genLabels = async function () {
     const labels = ['Android', 'Java', 'JavaScript', 'Python', 'Security']
     let all = []
@@ -27,7 +26,7 @@ const genComments = async function (articleId) {
         comments.push(commentModel.addComment({
             article_id: articleId,
             avatar: faker.image.avatar(),
-            content: faker.lorem.text(),
+            content: faker.lorem.paragraphs(),
             created_at: moment(faker.date.past()).format("YYYY-MM-DD")
         }))
     }
@@ -49,8 +48,8 @@ const genArticles = async function (count) {
     let all = []
     for (let i = 0; i < count; i++) {
         all.push(add(randomList(label_ids), {
-            title: faker.name.findName(),
-            content: faker.lorem.text(),
+            title: faker.lorem.words(),
+            content: faker.lorem.paragraphs(),
             created_at: moment(faker.date.past()).format("YYYY-MM-DD")
         }))
     }

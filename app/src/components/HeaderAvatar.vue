@@ -21,12 +21,17 @@
 <script>
 import { getInfo } from "@/services/user";
 import { Token } from "@/store";
+import eventBus from "@/common/eventBus";
 
 export default {
   name: "HeaderAvatar",
+  mounted() {
+    eventBus.$on("onAvatarUpdateDone", avatar => (this.avatar = avatar));
+  },
   created() {
     let name = this.$route.name;
-    if ("home" === name) {
+    console.log(name);
+    if ("home" === name || "post" === name) {
       this.inIndex = true;
     } else {
       this.inIndex = false;

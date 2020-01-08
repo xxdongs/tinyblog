@@ -60,6 +60,7 @@
 import Http from "@/services/http";
 import { getInfo, modifyInfo } from "@/services/user";
 import config from "@/common/config";
+import eventBus from "@/common/eventBus";
 // import { getQiniuToken, uploadImage } from "@/services/qiniu";
 
 export default {
@@ -110,11 +111,17 @@ export default {
       modifyInfo(data).then(res => {
         if (res.ok) {
           this.getProfile();
+          this.updateAvatarDone(data);
           this.$message.success(`更新成功`);
           return;
         }
         this.$message.error(`更新失败`);
       });
+    },
+    updateAvatarDone(data) {
+      if (data.avatar) {
+        eventBus.$emit("onAvatarUpdateDone", data.avatar);
+      }
     },
     beforeUpload(file) {
       const isJPG = file.type === "image/jpeg";

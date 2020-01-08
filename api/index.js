@@ -1,5 +1,4 @@
 const Koa = require('koa')
-const path = require('path')
 const {
     userRouter,
     qiniuRouter,
@@ -39,4 +38,6 @@ app.use(pubRouter.routes()).use(pubRouter.allowedMethods())
 app.use(static(config.staticDir));
 
 
-app.listen(config.prot, () => console.log(`Server starting at http://localhost:${config.prot}`))
+app.listen(config.prot, () => {
+    console.log(`Server starting at http://localhost:${config.prot}`)
+})
