@@ -2,20 +2,27 @@ const logger = require('./log')
 const config = require('./config')
 
 class Middleware {
-    static runLog(ctx) {
-        logger.debug(`URL: ${ctx.path} Method: ${ctx.request.method} Status: ${ctx.response.status} Body: ${JSON.stringify(ctx.request.body)} Authorization: ${ctx.request.header.authorization || 'null'} User-Agent: ${ctx.request.header['user-agent']}`)
-        // logger.debug(`URL: ${ctx.path} Method: ${ctx.request.method} Status: ${ctx.response.status} Authorization: ${ctx.request.header.authorization || 'null'} User-Agent: ${ctx.request.header['user-agent']}`)
+    static runLog(msg) {
+        logger.debug(msg)
+    }
+
+    static genLogMsg(ctx) {
+        let body = ''
+        if (ctx.request.method == 'GET') {
+            body = `Query: ${JSON.stringify(ctx.request.query)}`
+        } else {
+            body = `Body: ${JSON.stringify(ctx.request.body)}`
+        }
+        return `URL: ${ctx.path} Method: ${ctx.request.method} Status: ${ctx.response.status} ${body}`
     }
 
     static async runLogMidd(ctx, next) {
         await next()
+        let msg = Middleware.genLogMsg(ctx)
         if (config.isDev) {
-            console.log(`URL: ${ctx.path} Method: ${ctx.request.method} Status: ${ctx.response.status} \nBody: ${JSON.stringify(ctx.request.body)} \nAuthorization: ${ctx.request.header.authorization || 'null'} \nUser-Agent: ${ctx.request.header['user-agent']}\n`)
-            // console.log(`URL: ${ctx.path} Method: ${ctx.request.method} Status: ${ctx.response.status} \nAuthorization: ${ctx.request.header.authorization || 'null'} \nUser-Agent: ${ctx.request.header['user-agent']}\n`)
-            Middleware.runLog(ctx)
-        } else {
-            Middleware.runLog(ctx)
-        }   
+            console.log(msg)
+        }
+        Middleware.runLog(msg)
     }
 
     static exceptionLog(error) {

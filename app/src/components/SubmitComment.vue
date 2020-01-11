@@ -1,14 +1,24 @@
 <template>
   <div class="comment-form">
     <a-comment>
-      <a-avatar slot="avatar" :src="userAvatar" alt="Han Solo" />
+      <a-avatar class="avatar" slot="avatar" :src="userAvatar" alt="Han Solo" />
       <div slot="content">
-        <a-form-item>
-          <a-textarea placeholder="内容" :rows="4" @change="handleChangeContent" :value="content"></a-textarea>
-        </a-form-item>
-        <a-form-item>
-          <a-button htmlType="submit" :loading="submitting" @click="submitForm" type="primary">添加评论</a-button>
-        </a-form-item>
+        <a-textarea
+          @focus="onFocus"
+          @blur="onBlur"
+          placeholder="输入评论..."
+          :autosize="true"
+          @change="handleChangeContent"
+          :value="content"
+        ></a-textarea>
+        <a-button
+          v-if="focus || (!focus && content)"
+          class="submit"
+          htmlType="submit"
+          :loading="submitting"
+          @click="submitForm"
+          type="primary"
+        >添加评论</a-button>
       </div>
     </a-comment>
   </div>
@@ -36,7 +46,8 @@ export default {
       content: "",
       token: Token.checkToken(),
       userAvatar: "",
-      userId: null
+      userId: null,
+      focus: false,
     };
   },
   // props: ["articleId",'replyId'],
@@ -95,13 +106,22 @@ export default {
     },
     handleChangeNickname(e) {
       this.nickname = e.target.value;
+    },
+    onFocus() {
+      this.focus = true;
+    },
+    onBlur() {
+      this.focus = false;
     }
   }
 };
 </script>
 
 <style scoped>
-.comment-form {
-  margin-top: 24px;
+.avatar {
+  margin-top: 5px;
+}
+.submit {
+  margin-top: 5px;
 }
 </style>

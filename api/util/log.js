@@ -1,12 +1,13 @@
 const log4js = require('log4js')
-const data = new Date()
+const config = require('./config')
 
 log4js.configure({
     appenders: {
-        everything: { type: 'file', filename: `logs/${new Date().toLocaleDateString()}.log` }
+        debugLog: { type: 'file', filename: `${config.logsDir}/${new Date().getFullYear()}/${new Date().getMonth() + 1}_access.log` },
+
     },
     categories: {
-        default: { appenders: ['everything'], level: 'debug' }
+        default: { appenders: ['debugLog'], level: 'debug' },
     }
 })
 

@@ -26,6 +26,7 @@ const Config = {
     staticDir: path.join(__dirname, '../static'),
 
     defaultHotArticlesCount: 5,
+    logsDir: path.join(__dirname, '../logs')
 }
 
 Object.keys(cf).forEach(e => Config[e] = cf[e])
