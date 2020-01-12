@@ -60,12 +60,6 @@ let router = new Router({
             component: Admin,
             name: 'admin',
             children: [{
-                // path: '',
-                // component: ArticleList,
-                // name: 'articleList',
-                // meta: {
-                //     requireAuth: true,
-                // }
                 path: '',
                 component: Articles,
                 name: 'articles',

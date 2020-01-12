@@ -12,6 +12,7 @@ class ArticleController {
             return
         }
         let data = { title: body.title, content: body.content }
+        if('public' in body) data.public = body.public
         let results = await articleModel.addArticle(data)
         if (!results || results.affectedRows <= 0) {
             ctx.status = 400
@@ -35,7 +36,11 @@ class ArticleController {
             ctx.status = 400
             return
         }
+
         let data = { title: body.title, content: body.content }
+        if ('public' in body) {
+            data.public = body.public
+        }
         let results = await articleModel.updateArticle(articleId, data)
         if (!results || results.affectedRows <= 0) {
             ctx.status = 400
@@ -48,19 +53,25 @@ class ArticleController {
         ctx.status = 204
     }
 
+    static async getPublicArticle(ctx, next) {
+        await ArticleController.getArticleBase(ctx, next, 1)
+    }
+
     static async getArticle(ctx, next) {
+        await ArticleController.getArticleBase(ctx, next, 0)
+    }
+
+    static async getArticleBase(ctx, next, isPublic) {
         let articleId = parseInt(ctx.params.id)
         if (!articleId) {
             ctx.status = 400
             return
         }
-
         let all = new Promise((resolve, reject) => {
-            Promise.all([articleModel.getArticle(articleId),
+            Promise.all([articleModel.getArticle(articleId, isPublic),
             labelModel.getArticleLables(articleId)])
                 .then(data => resolve(data))
                 .catch(e => reject(e))
-
         })
         await articleModel.addViews(articleId)
 
@@ -79,17 +90,24 @@ class ArticleController {
         ctx.status = 200
     }
 
-    static async getArticleList(ctx, next) {
+    static async getPrivateArticleList(ctx, next) {
+        await ArticleController.getArticleList(ctx, next, 0)
+    }
+    static async getPublicArticleList(ctx, next) {
+        await ArticleController.getArticleList(ctx, next, 1)
+    }
+
+    static async getArticleList(ctx, next, isPublic) {
         let label_id = ctx.request.query.label_id
         let key = ctx.request.query.key
         let results = null
         if (label_id) {
-            results = await articleModel.getArticleList(label_id)
+            results = await articleModel.getArticleList(label_id, isPublic)
         } else if (key) {
-            results = await articleModel.getArticlesByKey(key)
+            results = await articleModel.getArticlesByKey(key, isPublic)
         }
         else {
-            results = await articleModel.getArticleList()
+            results = await articleModel.getArticleList(null, isPublic)
         }
         if (!results || results.length === 0) {
             ctx.status = 404
@@ -131,7 +149,7 @@ class ArticleController {
             ctx.status = 404
             return
         }
-        await commentModel.deleteCommentByArticle(articleId)
+        await commentModel.deleteComment('article_id', articleId)
         ctx.status = 204
     }
 }

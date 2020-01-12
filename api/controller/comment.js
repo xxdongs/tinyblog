@@ -63,12 +63,12 @@ class CommentController {
             ctx.status = 400
             return
         }
-        let results = await commentModel.deleteComment(commentId)
+        let results = await commentModel.deleteComment('id', commentId)
         if (!results || results.affectedRows <= 0) {
             ctx.status = 404
             return
         }
-        await commentModel.deleteReply(commentId)
+        await commentModel.deleteComment('reply_id',commentId)
         ctx.status = 204
     }
 }

@@ -17,10 +17,12 @@ CREATE TABLE IF NOT EXISTS Article (
   title VARCHAR(128) BINARY UNIQUE NOT NULL COMMENT '标题',
   content TEXT NOT NULL COMMENT '文章内容',
   views INT UNSIGNED DEFAULT 0 COMMENT '文章阅读量',
+  public BOOL DEFAULT 1 COMMENT '是否公开，默认公开，私密则为0',
   created_at TIMESTAMP DEFAULT current_timestamp COMMENT '创建时间',
   updated_at TIMESTAMP DEFAULT current_timestamp ON UPDATE current_timestamp COMMENT '最后一次更新时间',
   PRIMARY KEY (id),
-  INDEX title_index(title)
+  INDEX title_index(title),
+  INDEX public_index(public)
 )ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE IF NOT EXISTS Label (

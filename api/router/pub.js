@@ -17,10 +17,10 @@ router.get('/exists', userController.exists)
 router.get('/about', userController.about)
 
 router.get('/labels', labelController.getLabels)
-router.get('/article/:id', articleController.getArticle)
+router.get('/article/:id', articleController.getPublicArticle)
 router.get('/article/:id/labels', labelController.getArticleLables)
 router.get('/article/:id/comments', commentController.getArticleComments)
-router.get('/articles/list', articleController.getArticleList)
+router.get('/articles/list', articleController.getPublicArticleList)
 router.get('/articles/timeline', articleController.getArticleListByTime)
 router.get('/articles/hot', articleController.getHotArticles)
 
