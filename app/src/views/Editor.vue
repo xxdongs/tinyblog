@@ -1,33 +1,48 @@
 <template>
   <div>
-    <a-row class="editor-title">
-      <a-col :span="12">
-        <a-input @change="handleChangeTitle" :value="title" placeholder="请输入文章标题" />
-      </a-col>
-      <a-col :span="1" :offset="9">
-        <el-popover placement="bottom" title="标签" trigger="click">
-          <LabelBind :activeLabels="activeLabels" @onTagsSelected="onTagsSelected"></LabelBind>
-          <a-button slot="reference" icon="tags" shape="circle" type="default"></a-button>
-        </el-popover>
-      </a-col>
-      <a-col :span="2">
-        <a-button icon="check" type="primary" @click="publishArticle">{{publishDescription}}</a-button>
-      </a-col>
-    </a-row>
-    <a-row>
+    <div v-if="!notFound">
+      <a-row class="editor-title">
+        <a-col :span="12">
+          <a-input @change="handleChangeTitle" :value="title" placeholder="请输入文章标题" />
+        </a-col>
+        <a-col :span="1" :offset="8">
+          <a-tooltip :title="isPublic === 1 ? '公开' : '私密'" placement="left">
+            <a-button
+              @click="changePublic"
+              :icon="isPublic === 1 ? 'eye' : 'eye-invisible'"
+              shape="circle"
+              type="default"
+            ></a-button>
+          </a-tooltip>
+        </a-col>
+        <a-col :span="1">
+          <el-popover placement="bottom" title="标签" trigger="click">
+            <LabelBind :activeLabels="activeLabels" @onTagsSelected="onTagsSelected"></LabelBind>
+            <a-button slot="reference" icon="tags" shape="circle" type="default"></a-button>
+          </el-popover>
+        </a-col>
+        <a-col :span="2">
+          <a-button icon="check" type="primary" @click="publishArticle">{{publishDescription}}</a-button>
+        </a-col>
+      </a-row>
       <mavon-editor
         class="editor-body"
+        :boxShadow="false"
+        language="zh-CN"
         v-model="content"
         @imgAdd="imgAdd"
-        :placeholder="contentPlaceholder"
+        placeholder="开始写作..."
+        :autofocus="false"
         ref="md"
       ></mavon-editor>
-    </a-row>
+    </div>
+    <NotFound v-else></NotFound>
   </div>
 </template>
 
 <script>
 import LabelBind from "@/components/LabelBind";
+import NotFound from "@/components/NotFound";
 // import { getQiniuToken, uploadImage } from "@/services/qiniu";
 import Http from "@/services/http";
 import Article from "@/services/article";
@@ -35,7 +50,7 @@ import Article from "@/services/article";
 
 export default {
   name: "Editor",
-  components: { LabelBind },
+  components: { LabelBind, NotFound },
   async created() {
     // await this.getQiniuToken();
     if (this.articleId) {
@@ -48,18 +63,17 @@ export default {
       articleId: this.$route.params.id,
       content: "",
       title: "",
+      isPublic: 1,
       label_ids: [],
-      contentPlaceholder: "开始写作吧",
       // qiniuToken: "",
       publishDescription: "发布",
-      article: null,
       activeLabels: [],
       uploadAction: "/api/file/upload",
+      notFound: false
     };
   },
   methods: {
     async publishArticle() {
-      console.log("publish article");
       if (this.title === "") {
         this.$message.warning("标题不能为空");
         return;
@@ -68,18 +82,20 @@ export default {
         this.$message.warning("内容不能为空");
         return;
       }
-      if (this.articleId) {
-        await this.editArticle();
-      } else {
-        await this.addArticle();
-      }
-    },
-    async editArticle() {
-      let res = await Article.updateArticle(this.articleId, {
+      let data = {
         title: this.title,
         content: this.content,
-        label_ids: this.label_ids
-      });
+        label_ids: this.label_ids,
+        public: this.isPublic
+      };
+      if (this.articleId) {
+        await this.editArticle(data);
+      } else {
+        await this.addArticle(data);
+      }
+    },
+    async editArticle(data) {
+      let res = await Article.updateArticle(this.articleId, data);
       if (res.ok) {
         this.$message.success("更新文章成功");
         window.location.href = "/post/".concat(this.articleId);
@@ -87,15 +103,11 @@ export default {
         this.$message.error("更新文章出错");
       }
     },
-    async addArticle() {
-      let res = await Article.addArticle({
-        title: this.title,
-        content: this.content,
-        label_ids: this.label_ids
-      });
+    async addArticle(data) {
+      let res = await Article.addArticle(data);
       if (res.ok) {
         this.$message.success("发布文章成功");
-        window.location.href = "/post/".concat(res.data.id);
+        this.$router.push({ name: "post", params: { id: res.data.id } });
       } else {
         this.$message.error("发布文章出错");
       }
@@ -107,15 +119,16 @@ export default {
     //   }
     // },
     async getArticle() {
-      let res = await Article.getArticle(this.articleId);
+      let res = await Article.getArticle(this.articleId, 0);
       if (res.ok) {
-        this.article = res.data;
-        this.title = this.article.title;
-        this.content = this.article.content;
-        this.activeLabels = this.article.labels
-          ? this.article.labels.map(v => v.id)
+        this.title = res.data.title;
+        this.content = res.data.content;
+        this.isPublic = res.data.public;
+        this.activeLabels = res.data.labels
+          ? res.data.labels.map(v => v.id)
           : [];
-        console.log(this.activeLabels);
+      } else {
+        this.notFound = true;
       }
     },
     onTagsSelected(data) {
@@ -139,6 +152,13 @@ export default {
     },
     handleChangeTitle(e) {
       this.title = e.target.value;
+    },
+    changePublic() {
+      if (this.isPublic === 1) {
+        this.isPublic = 0;
+      } else {
+        this.isPublic = 1;
+      }
     }
   }
 };
@@ -150,6 +170,6 @@ export default {
 }
 
 .editor-body {
-  min-height: 500px;
+  height: 100%;
 }
 </style>

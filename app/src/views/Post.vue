@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-layout>
+    <a-layout v-if="!isNotFound">
       <a-layout>
         <a-layout-content class="content">
           <a-list class="article" itemLayout="vertical" size="large" :split="false">
@@ -30,6 +30,8 @@
             <div class="article-detail">
               <mavon-editor
                 class="md center"
+                :boxShadow="false"
+                :autofocus="false"
                 :ishljs="mdSetting.heightLight"
                 :value="article.content"
                 :subfield="mdSetting.subfield"
@@ -45,21 +47,23 @@
         </a-layout-content>
       </a-layout>
     </a-layout>
+    <NotFound v-else></NotFound>
   </div>
 </template>
 
 <script>
-import Articl from "@/services/article";
+import Article from "@/services/article";
 import Comments from "@/components/Comments";
 import ArticleMore from "@/components/ArticleMore";
 import SubmitComment from "@/components/SubmitComment";
+import NotFound from "@/components/NotFound";
 import eventBus from "@/common/eventBus";
 import moment from "moment";
 import { Token } from "@/store";
 
 export default {
   name: "Post",
-  components: { Comments, ArticleMore, SubmitComment },
+  components: { Comments, ArticleMore, SubmitComment, NotFound },
   async created() {
     await this.getArticle();
   },
@@ -88,7 +92,7 @@ export default {
   },
   methods: {
     async getArticle() {
-      let res = await Articl.getArticle(this.articleId);
+      let res = await Article.getArticle(this.articleId, this.more ? 0 : 1);
       if (res.ok) {
         this.article = res.data;
         this.articleList = [this.article];

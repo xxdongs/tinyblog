@@ -32,7 +32,10 @@ export default {
       });
     },
     confirmEdit() {
-      window.location.href = "/admin/editor/edit/".concat(this.articleId);
+      this.$router.push({
+        name: "editor_edit",
+        params: { id: this.articleId }
+      });
     }
   }
 };

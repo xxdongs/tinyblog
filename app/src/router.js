@@ -11,9 +11,10 @@ const Home = () => import('@/components/Home.vue');
 
 
 const Admin = () => import('@/views/Admin.vue');
+const Articles = () => import('@/views/Articles.vue');
 const Login = () => import('@/views/Login.vue');
 const Editor = () => import('@/views/Editor.vue');
-const ArticleList = () => import('@/components/ArticleList.vue');
+// const ArticleList = () => import('@/components/ArticleList.vue');
 const Comments = () => import('@/components/Comments.vue');
 const Setting = () => import('@/views/Setting.vue');
 
@@ -59,9 +60,15 @@ let router = new Router({
             component: Admin,
             name: 'admin',
             children: [{
+                // path: '',
+                // component: ArticleList,
+                // name: 'articleList',
+                // meta: {
+                //     requireAuth: true,
+                // }
                 path: '',
-                component: ArticleList,
-                name: 'articleList',
+                component: Articles,
+                name: 'articles',
                 meta: {
                     requireAuth: true,
                 }
@@ -81,23 +88,23 @@ let router = new Router({
                 meta: {
                     requireAuth: true,
                 }
-            },
-            {
-                path: 'editor/new',
-                component: Editor,
-                name: 'editor_new',
-                meta: {
-                    requireAuth: true,
-                },
-            },
-            {
-                path: 'editor/edit/:id',
-                component: Editor,
-                name: 'editor_edit',
-                meta: {
-                    requireAuth: true,
-                },
             }]
+        },
+        {
+            path: '/editor',
+            component: Editor,
+            name: 'editor_new',
+            meta: {
+                requireAuth: true,
+            },
+        },
+        {
+            path: '/editor/:id',
+            component: Editor,
+            name: 'editor_edit',
+            meta: {
+                requireAuth: true,
+            },
         },
         {
             path: '*',

@@ -13,11 +13,11 @@
             {{item.views}}
           </span>
           <span>
-            <a-icon type="message"/>
+            <a-icon type="message" />
             {{item.comment_count}}
           </span>
           <span>
-            <a-icon type="calendar"/>
+            <a-icon type="calendar" />
             {{moment(item.created_at).format('YYYY年MM月DD日')}}
           </span>
           <ArticleMore v-if="inAdmin" :articleId="item.id" />
@@ -30,7 +30,6 @@
         </div>
       </a-list-item>
       <a-pagination
-        v-if="articles.length > pageSize"
         class="article-page"
         :pageSize.sync="pageSize"
         :defaultCurrent="currentPage"
@@ -52,7 +51,17 @@ export default {
   async created() {
     await this.getArticleList();
   },
-  props: ["clickedLabel"],
+  // props: ["clickedLabel"],
+  props: {
+    clickedLabel: {
+      type: String,
+      default: ""
+    },
+    isPublic: {
+      type: Boolean,
+      default: true
+    }
+  },
   components: { ArticleMore },
   data() {
     return {
@@ -60,7 +69,7 @@ export default {
       pageSize: 10,
       currentPage: 1,
       more: Token.checkToken(),
-      inAdmin: this.$route.name === "articleList",
+      inAdmin: this.$route.name === "articles",
       moment
     };
   },
@@ -85,7 +94,10 @@ export default {
   },
   methods: {
     async getArticleList(label_id) {
-      let res = await Article.getArticleList({ label_id });
+      let res = await Article.getArticleList(
+        { label_id },
+        this.isPublic ? 1 : 0
+      );
       let ar = [];
       if (res.ok) {
         ar = res.data.results;

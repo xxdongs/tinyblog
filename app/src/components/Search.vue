@@ -14,6 +14,7 @@
 <script>
 import ArticleSimpleList from "@/components/ArticleSimpleList";
 import Article from "@/services/article";
+import { Token } from "@/store";
 
 export default {
   name: "Search",
@@ -23,14 +24,15 @@ export default {
     return {
       fetching: false,
       dialogShow: false,
-      data: []
+      data: [],
+      more: Token.checkToken()
     };
   },
   methods: {
     onSearch(value) {
       if (!value) return;
       this.fetching = true;
-      Article.getArticleList({ key: value }).then(res => {
+      Article.getArticleList({ key: value }, this.more ? 0 : 1).then(res => {
         if (res.ok) {
           this.data = res.data.results;
           this.dialogShow = true;
@@ -44,9 +46,7 @@ export default {
     handleOk() {
       this.dialogShow = false;
     },
-    afterClose() {
-      
-    }
+    afterClose() {}
   }
 };
 </script>

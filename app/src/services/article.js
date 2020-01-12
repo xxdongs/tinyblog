@@ -12,21 +12,28 @@ export default class Article {
         return await Http.put(par)
     }
 
-    static async getArticle(id) {
-        let par = { url: '/api/pub/article/'.concat(id) }
+    static async getArticle(id, isPublic = 1) {
+        let url = null
+        if (isPublic === 1) {
+            url = '/api/pub/article/'
+        } else {
+            url = '/api/article/'
+        }
+        let par = { url: url.concat(id) }
         return await Http.get(par)
     }
 
-    // static async getArticleList(label_id) {
-    static async getArticleList(payload) {
+    static async getArticleList(payload, isPublic = 1) {
         let par = null
+        console.log(payload,isPublic)
+        let url = isPublic === 1 ? '/api/pub/articles/list' : '/api/articles/list'
         if (payload.label_id) {
-            par = { url: '/api/pub/articles/list', data: { label_id: payload.label_id } }
+            par = { url, data: { label_id: payload.label_id } }
         } else if (payload.key) {
-            par = { url: '/api/pub/articles/list', data: { key: payload.key } }
+            par = { url, data: { key: payload.key } }
         }
         else {
-            par = { url: '/api/pub/articles/list' }
+            par = { url }
         }
         return await Http.get(par)
     }

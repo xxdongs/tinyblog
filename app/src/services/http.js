@@ -21,6 +21,7 @@ export default class Http {
         if (params.headers) {
             Object.keys(params.headers).forEach((key) => config.headers[key] = params.headers[key])
         }
+        // console.log(config)
         try {
             let response = await axios(config)
             console.log({ url: config.url, response })

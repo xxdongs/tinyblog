@@ -65,7 +65,6 @@
       </a-list-item>
     </a-list>
     <a-pagination
-      v-if="allComments.length > pageSize"
       :pageSize.sync="pageSize"
       class="comment-page"
       :defaultCurrent="currentPage"

@@ -1,16 +1,6 @@
 <template>
   <div>
-    <a-menu
-      type="flex"
-      justify="start"
-      class="menu"
-      v-model="current"
-      mode="horizontal"
-      @click="handleSelect"
-    >
-      <!-- <a-menu-item key="index">
-        <a-button @click="goIndex" icno="home" type="link">首页</a-button>
-      </a-menu-item>-->
+    <a-menu v-model="current" mode="horizontal" @click="handleSelect">
       <a-menu-item key="article">
         <a-icon type="file-text" />文章
       </a-menu-item>
@@ -21,7 +11,7 @@
         <a-icon type="setting" />设置
       </a-menu-item>
       <a-menu-item disabled key="write">
-        <a-button icon="edit" id="addBtn" type="primary" @click="writeArticle">写文章</a-button>
+        <a-button icon="edit" id="addBtn" :ghost="true" type="primary" @click="writeArticle">写文章</a-button>
       </a-menu-item>
 
       <HeaderAvatar class="user-avatar"></HeaderAvatar>
@@ -48,7 +38,7 @@ export default {
       this.$router.push("/");
     } else if (name === "comments") {
       this.current = ["comment"];
-    } else if (name === "articleList") {
+    } else if (name === "articles") {
       this.current = ["article"];
     } else if (name === "setting") {
       this.current = ["setting"];
@@ -70,9 +60,6 @@ export default {
     writeArticle() {
       this.$router.push({ name: "editor_new" });
     },
-    goIndex() {
-      window.location.href = "/";
-    }
   }
 };
 </script>
