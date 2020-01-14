@@ -23,18 +23,14 @@ export default class Article {
         return await Http.get(par)
     }
 
-    static async getArticleList(payload, isPublic = 1) {
-        let par = null
-        console.log(payload,isPublic)
+    static async getArticleList(payload, isPublic = 1, start, size) {
         let url = isPublic === 1 ? '/api/pub/articles/list' : '/api/articles/list'
-        if (payload.label_id) {
-            par = { url, data: { label_id: payload.label_id } }
-        } else if (payload.key) {
-            par = { url, data: { key: payload.key } }
+        if (start || size) {
+            payload.start = start
+            payload.size = size
         }
-        else {
-            par = { url }
-        }
+        let par = { url, data: payload }
+        console.log(par)
         return await Http.get(par)
     }
 
@@ -46,9 +42,5 @@ export default class Article {
 
     static async getArticleTimeline() {
         return await Http.get({ url: '/api/pub/articles/timeline' })
-    }
-
-    static async getHotArticles() {
-        return await Http.get({ url: '/api/pub/articles/hot' })
     }
 }

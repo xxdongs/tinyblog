@@ -25,7 +25,6 @@ const genComments = async function (articleId) {
     for (let i = 0; i < comment_count; i++) {
         comments.push(commentModel.addComment({
             article_id: articleId,
-            avatar: faker.image.avatar(),
             content: faker.lorem.paragraphs(),
             created_at: moment(faker.date.past()).format("YYYY-MM-DD")
         }))
@@ -73,8 +72,8 @@ const deleteTabels = async function () {
 
 
 // deleteTabels().then(val => genArticles(1))
-deleteTabels().then(val => genArticles(50))
-// deleteTabels().then(val => genArticles(10000))
+// deleteTabels().then(val => genArticles(50))
+deleteTabels().then(val => genArticles(5000))
 // console.log(faker.image.avatar())
 
 // genArticles(100)

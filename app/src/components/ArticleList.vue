@@ -1,11 +1,13 @@
 <template>
   <div class="container">
-    <a-list
-      v-if="articles.length >= 0"
-      itemLayout="vertical"
-      size="large"
-      :dataSource="displayArticles"
-    >
+    <SelectArticle
+      class="selection"
+      @onTypeSelect="onTypeSelect"
+      @onPrivacyClick="onPrivacyClick"
+      @onTagClick="onTagClick"
+      :inAdmin="inAdmin"
+    />
+    <a-list v-if="count > 0" itemLayout="vertical" size="large" :dataSource="articles">
       <a-list-item slot="renderItem" slot-scope="item" :key="item.id">
         <template slot="actions">
           <span>
@@ -33,79 +35,89 @@
         class="article-page"
         :pageSize.sync="pageSize"
         :defaultCurrent="currentPage"
-        :total="articles.length"
+        :total="count"
         @change="handleCurrentChange"
+        :pageSizeOptions="pageSizeOptions"
+        @showSizeChange="onShowSizeChange"
+        showSizeChanger
       />
     </a-list>
+    <NotFound v-else />
   </div>
 </template>
 
 <script>
 import Article from "@/services/article";
 import ArticleMore from "@/components/ArticleMore";
+import SelectArticle from "@/components/SelectArticle";
+import NotFound from "@/components/NotFound";
 import moment from "moment";
 import { Token } from "@/store";
+import config from "@/common/config";
 
 export default {
   name: "ArticleList",
   async created() {
-    await this.getArticleList();
+    await this.getArticleList(null);
   },
-  // props: ["clickedLabel"],
-  props: {
-    clickedLabel: {
-      type: String,
-      default: ""
-    },
-    isPublic: {
-      type: Boolean,
-      default: true
-    }
-  },
-  components: { ArticleMore },
+  components: { ArticleMore, SelectArticle, NotFound },
   data() {
     return {
       articles: [],
-      pageSize: 10,
+      pageSize: 5,
       currentPage: 1,
+      pageSizeOptions: config.pageSizeOptions,
       more: Token.checkToken(),
       inAdmin: this.$route.name === "articles",
-      moment
+      moment,
+      latest: true,
+      count: 1,
+      clickTag: 0,
+      isPublic: 1,
+      selectType: "desc"
     };
   },
-  computed: {
-    displayArticles: function() {
-      let start = (this.currentPage - 1) * this.pageSize;
-      let offset = this.articles.length % this.pageSize;
-      let end =
-        offset === 0 || start + this.pageSize < this.articles.length
-          ? start + this.pageSize
-          : start + offset;
-      return this.articles.slice(start, end);
-    }
-  },
-  watch: {
-    clickedLabel: {
-      deep: true,
-      async handler(newVal) {
-        await this.getArticleList(newVal);
-      }
-    }
-  },
   methods: {
-    async getArticleList(label_id) {
-      let res = await Article.getArticleList(
-        { label_id },
-        this.isPublic ? 1 : 0
-      );
-      let ar = [];
-      if (res.ok) {
-        ar = res.data.results;
+    async getArticleList() {
+      let payload = { label_id: this.clickTag };
+      if (this.selectType === "desc" || this.selectType === "asc") {
+        payload.order_by = this.selectType;
+      } else if (this.selectType === "views") {
+        payload.by_views = 1;
       }
-      this.articles = ar;
+      let res = await Article.getArticleList(
+        payload,
+        this.isPublic,
+        (this.currentPage - 1) * this.pageSize,
+        this.pageSize
+      );
+      if (res.ok) {
+        this.articles = res.data.results;
+        this.count = res.data.count;
+      } else {
+        this.articles = [];
+        this.count = 0;
+      }
     },
-    handleCurrentChange(val) {
+    async handleCurrentChange(val) {
       this.currentPage = val;
+      await this.getArticleList();
+    },
+    async onShowSizeChange(current, pageSize) {
+      this.pageSize = pageSize;
+      await this.getArticleList();
+    },
+    async onTagClick(tag) {
+      this.clickTag = tag;
+      await this.getArticleList();
+    },
+    async onPrivacyClick(isPublic) {
+      this.isPublic = isPublic;
+      await this.getArticleList();
+    },
+    async onTypeSelect(type) {
+      this.selectType = type;
+      await this.getArticleList();
     }
   }
 };
@@ -113,8 +125,11 @@ export default {
 
 <style scoped>
 .article-page {
-  margin-top: 24px;
   margin-bottom: 24px;
+  margin-top: 24px;
   text-align: center;
+}
+.selection {
+  margin-top: 12px;
 }
 </style>

@@ -46,9 +46,8 @@ CREATE TABLE IF NOT EXISTS ArticleLabel(
 CREATE TABLE IF NOT EXISTS Comment(
   id INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
   article_id INT NOT NULL COMMENT '评论所属的文章',
-  user_id INT UNSIGNED DEFAULT NULL COMMENT '用户ID,匿名评论为null',
-  reply_id INT UNSIGNED DEFAULT NULL COMMENT '被回复的评论的ID',
-  avatar VARCHAR(256) NOT NULL COMMENT '匿名评论者的头像URL',
+  user_id INT UNSIGNED DEFAULT 0 COMMENT '用户ID,匿名评论为null',
+  reply_id INT UNSIGNED DEFAULT 0 COMMENT '被回复的评论的ID',
   content TEXT DEFAULT NULL COMMENT '评论的正文',
   created_at TIMESTAMP DEFAULT current_timestamp COMMENT '创建时间',
   PRIMARY KEY (id),

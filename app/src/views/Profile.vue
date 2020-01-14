@@ -61,13 +61,14 @@ import Http from "@/services/http";
 import { getInfo, modifyInfo } from "@/services/user";
 import config from "@/common/config";
 import eventBus from "@/common/eventBus";
+import userIcon from "@/assets/user-avatar.svg";
 // import { getQiniuToken, uploadImage } from "@/services/qiniu";
 
 export default {
   name: "Profile",
   data() {
     return {
-      avatar: "",
+      avatar: userIcon,
       profile: this.$form.createForm(this, { name: "profile" }),
       labelCol: { span: 1 },
       wrapperCol: { span: 6 },

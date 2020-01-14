@@ -22,9 +22,9 @@ router.get('/article/:id/labels', labelController.getArticleLables)
 router.get('/article/:id/comments', commentController.getArticleComments)
 router.get('/articles/list', articleController.getPublicArticleList)
 router.get('/articles/timeline', articleController.getArticleListByTime)
-router.get('/articles/hot', articleController.getHotArticles)
 
 router.post('/comment', commentController.addComment)
 router.get('/comment/list', commentController.getComments)
+router.get('/comment/reply', commentController.getReplyComments)
 
 module.exports = router;

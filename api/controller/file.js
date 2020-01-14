@@ -23,7 +23,7 @@ class FileController {
         if (result) {
             console.log("result " + result)
             ctx.status = 200
-            ctx.body={avatar: result.split(/\\|\//).pop()}
+            ctx.body = { avatar: result.split(/\\|\//).pop() }
             return
         }
         ctx.status = 444

@@ -1,7 +1,7 @@
 <template>
   <div class="comment-form">
     <a-comment>
-      <a-avatar class="avatar" slot="avatar" :src="userAvatar" alt="Han Solo" />
+      <a-avatar class="avatar" slot="avatar" :src="avatar" alt="Han Solo" />
       <div slot="content">
         <a-textarea
           @focus="onFocus"
@@ -12,13 +12,23 @@
           :value="content"
         ></a-textarea>
         <a-button
-          v-if="focus || (!focus && content)"
+          v-if="!replyId && (focus || (!focus && content))"
           class="submit"
           htmlType="submit"
           :loading="submitting"
           @click="submitForm"
           type="primary"
         >添加评论</a-button>
+
+        <a-button @click="cancel" class="cancel" v-if="replyId" type="defalut">取消</a-button>
+        <a-button
+          v-if="replyId"
+          class="submit"
+          htmlType="submit"
+          :loading="submitting"
+          @click="submitForm"
+          type="primary"
+        >回复</a-button>
       </div>
     </a-comment>
   </div>
@@ -27,46 +37,34 @@
 <script>
 import Comment from "@/services/comment";
 import eventBus from "@/common/eventBus";
-import faker from "faker";
-import { getInfo } from "@/services/user";
 import { Token } from "@/store";
+import anonymousIcon from "@/assets/anonymous-avatar.svg";
 
 export default {
   name: "SubmitComment",
-  created() {
-    if (this.token) {
-      this.getUser();
-    } else {
-      this.userAvatar = faker.image.avatar();
-    }
-  },
   data() {
     return {
       submitting: false,
       content: "",
       token: Token.checkToken(),
-      userAvatar: "",
-      userId: null,
-      focus: false,
+      avatar: anonymousIcon,
+      focus: false
     };
   },
-  // props: ["articleId",'replyId'],
   props: {
     articleId: {
       required: true
     },
     replyId: {
       default: undefined
+    },
+    userId: {
+      default: 0
     }
   },
   methods: {
-    getUser() {
-      getInfo().then(res => {
-        if (res.ok) {
-          this.userAvatar = res.data.avatar;
-          this.userId = res.data.id;
-        }
-      });
+    cancel() {
+      eventBus.$emit("onAddCommentCancel", this.replyId);
     },
     submitForm() {
       if (!this.content) {
@@ -82,7 +80,7 @@ export default {
       if (this.replyId) {
         data.reply_id = this.replyId;
       }
-      if (this.userId) {
+      if (this.userId != 0) {
         data.user_id = this.userId;
       }
 
@@ -91,7 +89,7 @@ export default {
         if (res.ok) {
           this.$message.success("评论成功");
           this.resetForm();
-          eventBus.$emit("onAddCommentSuc");
+          eventBus.$emit("onAddCommentSuc", this.replyId);
           return;
         }
         this.$message.error("评论失败");
@@ -123,5 +121,9 @@ export default {
 }
 .submit {
   margin-top: 5px;
+}
+.cancel {
+  margin-top: 5px;
+  margin-right: 10px;
 }
 </style>

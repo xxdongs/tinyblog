@@ -3,7 +3,8 @@
     <span @click="confirmEdit">
       <a-icon type="edit" style="margin-right: 8px" />
     </span>
-    <span>
+    <a-divider type="vertical" />
+    <span style="margin-left: 5px">
       <a-popconfirm title="确认删除此文章吗" @confirm="confirmDelete" okText="确认" cancelText="取消">
         <span>
           <a-icon type="delete" />

@@ -12,7 +12,7 @@ class ArticleController {
             return
         }
         let data = { title: body.title, content: body.content }
-        if('public' in body) data.public = body.public
+        if ('public' in body) data.public = body.public
         let results = await articleModel.addArticle(data)
         if (!results || results.affectedRows <= 0) {
             ctx.status = 400
@@ -98,38 +98,42 @@ class ArticleController {
     }
 
     static async getArticleList(ctx, next, isPublic) {
-        let label_id = ctx.request.query.label_id
+
+        let labelId = parseInt(ctx.request.query.label_id) || 0
         let key = ctx.request.query.key
+        let start = parseInt(ctx.request.query.start) || 0
+        let size = parseInt(ctx.request.query.size) || 10
+        let orderBy = ctx.request.query.order_by || "desc"
+        let byViews = parseInt(ctx.request.query.by_views) || 0
         let results = null
-        if (label_id) {
-            results = await articleModel.getArticleList(label_id, isPublic)
-        } else if (key) {
-            results = await articleModel.getArticlesByKey(key, isPublic)
+
+        if (key) {
+            results = await articleModel.getArticlesByKey(key, isPublic, start, size)
+        } else {
+            results = await articleModel.getArticleList(labelId, orderBy, byViews, start, size, isPublic)
         }
-        else {
-            results = await articleModel.getArticleList(null, isPublic)
+
+        if (key) {
+            if (!results || results.length === 0) {
+                ctx.status = 404
+                return
+            }
+            ctx.status = 200
+            ctx.body = { results }
+            return
         }
-        if (!results || results.length === 0) {
+        let list = results[0]
+        let count = results[1][0].count
+        if (count <= 0 || !list || list.length === 0) {
             ctx.status = 404
             return
         }
         ctx.status = 200
-        ctx.body = { results }
+        ctx.body = { results: list, count }
     }
 
     static async getArticleListByTime(ctx, next) {
         let results = await articleModel.getArticleTimeline()
-        if (!results || results.length === 0) {
-            ctx.status = 404
-            return
-        }
-        ctx.status = 200
-        ctx.body = { results }
-    }
-
-    static async getHotArticles(ctx, next) {
-        let count = ctx.request.query.count || config.defaultHotArticlesCount
-        let results = await articleModel.getArticlesByViews(parseInt(count))
         if (!results || results.length === 0) {
             ctx.status = 404
             return

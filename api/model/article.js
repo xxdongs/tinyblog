@@ -26,24 +26,25 @@ class LabelModel extends Connection {
         return super.query(GET_ARTICLE, [articleId])
     }
 
-    static getArticleList(label_id, isPublic) {
+    static getArticleList(labelId, orderBy, byViews, start, size, isPublic) {
         let symbol1 = ''
         let symbol2 = ''
+        let symbol3 = ''
         let params = null
-        if (label_id) {
-            if (label_id === '-1') {
-                symbol2 = 'AND a.id not in (SELECT article_id FROM ArticleLabel al) '
-                params = [isPublic]
-            } else {
-                symbol1 = 'GROUP_CONCAT(DISTINCT l.label) as labels,'
-                symbol2 = 'AND al.label_id=? '
-                params = [isPublic, parseInt(label_id)]
-            }
+        if (labelId === 0) {
+            symbol1 = 'GROUP_CONCAT(DISTINCT l.label) as labels,'
+            params = [isPublic, start, size]
         } else {
             symbol1 = 'GROUP_CONCAT(DISTINCT l.label) as labels,'
-            params = [isPublic]
+            symbol2 = 'AND al.label_id=? '
+            params = [isPublic, labelId, start, size]
         }
-        let GET_ARTICLE_LIST = `SELECT 
+        if(byViews === 1) {
+            symbol3 = 'a.views DESC '
+        }else {
+            symbol3 = 'a.created_at '.concat(orderBy)
+        }
+        let sqlList = `SELECT 
         a.id,a.title,a.views,a.created_at,
         ${symbol1} 
         COUNT(DISTINCT c.id) as comment_count
@@ -55,10 +56,23 @@ class LabelModel extends Connection {
         LEFT JOIN Comment c
         ON a.id=c.article_id
         WHERE a.public=? ${symbol2}
-        GROUP BY a.id
-        ORDER BY a.created_at DESC
-        ;`
-        return super.query(GET_ARTICLE_LIST, params)
+        GROUP BY a.id 
+        ORDER BY ${symbol3} 
+        limit ?,?;`
+        let sqlCount = `SELECT 
+        COUNT(distinct a.id) as count 
+        FROM Article a 
+        LEFT JOIN ArticleLabel al 
+        ON al.article_id=a.id
+        WHERE a.public=? ${symbol2};`
+        return Promise.all([super.query(sqlList, params),
+        super.query(sqlCount, [isPublic, labelId])]
+        )
+    }
+
+    static getArticlesCount(isPublic) {
+        let sql = `SELECT COUNT(*) as count FROM Article WHERE public=?;`
+        return super.query(sql, [isPublic])
     }
 
     static deleteArticle(articleId) {
@@ -71,22 +85,14 @@ class LabelModel extends Connection {
         return super.query(GET_ARTICLE_TIMELINE, null)
     }
 
-    static getArticlesByViews(count) {
-        let GET_ARTICLES_BY_VIEWS = `SELECT 
-        id,title,views FROM Article 
-        ORDER BY views DESC 
-        LIMIT 0,?;`
-        return super.query(GET_ARTICLES_BY_VIEWS, [count])
-    }
-
     static getArticlesByKey(key, isPublic) {
         let symbol = isPublic === 1 ? 'AND public=1' : ''
-        let SELECT_ARTICLES_BY_KEY = `SELECT 
+        let sqlList = `SELECT 
         id,title,public FROM Article 
         WHERE (LOCATE(?,title) > 0 OR LOCATE(?,content))
         ${symbol}
         ORDER BY created_at DESC;`
-        return super.query(SELECT_ARTICLES_BY_KEY, [key, key, isPublic])
+        return super.query(sqlList, [key, key])
     }
 
     static addViews(articleId) {

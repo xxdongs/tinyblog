@@ -41,6 +41,7 @@ export default {
       getInfo().then(res => {
         if (res.ok) {
           this.avatar = res.data.avatar;
+          eventBus.$emit("onUserInfoDone", res.data)
         }
       });
     }

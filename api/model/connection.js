@@ -17,7 +17,7 @@ class Connection {
                     return
                 }
                 resolve(results)
-                // if (config.isDev) console.log(sql)
+                if (config.isDev) console.log("querying")
             })
         })
     }

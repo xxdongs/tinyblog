@@ -14,7 +14,7 @@
       </span>
     </a-list>
     <a-pagination
-      v-if="page && articles.length > pageSize"
+      v-if="page"
       class="article-page"
       :pageSize.sync="pageSize"
       :defaultCurrent="currentPage"

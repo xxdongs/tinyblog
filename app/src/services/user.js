@@ -1,7 +1,7 @@
 import Http from './http'
 
-export async function register(password, email, avatar) {
-    let par = { data: { password, email, avatar } }
+export async function register(password, email) {
+    let par = { data: { password, email } }
     par.url = '/api/pub/register'
     return await Http.post(par)
 }

@@ -37,7 +37,6 @@ import { register, login } from "@/services/user";
 import Constant from "@/common/constant";
 import { Token } from "@/store";
 import config from "@/common/config";
-import faker from "faker";
 
 export default {
   name: "Login",
@@ -72,7 +71,7 @@ export default {
     },
     registerAction(values) {
       if (values.email && values.password) {
-        register(values.password, values.email, faker.image.avatar()).then(
+        register(values.password, values.email).then(
           res => {
             if (res.ok) {
               this.$message.warning(Constant.TIPS_REGISTER_DONE);

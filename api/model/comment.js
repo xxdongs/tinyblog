@@ -12,26 +12,59 @@ class CommentModel extends Connection {
         return super.query(COMMENT_EXISTED, [id])
     }
 
-    static getArticleComments(articleId) {
-        let GET_ARTICLE_COMMENTS = `SELECT 
-        id,article_id,reply_id,user_id,avatar,content,created_at 
-        FROM Comment WHERE article_id=? 
-        ORDER BY created_at DESC;`
-        return super.query(GET_ARTICLE_COMMENTS, [articleId])
-    }
-
-    static deleteComment(column,val) {
+    static deleteComment(column, val) {
         let DELETE_COMMENT = `DELETE FROM Comment WHERE ${column}=?;`
         return super.query(DELETE_COMMENT, [val])
     }
 
-    static getComments(timeStart, timeEnd) {
-        let GET_COMMENTS = `SELECT 
+    static getArticleComments(articleId, start, size) {
+        let sqlList = `SELECT 
+        id,article_id,reply_id,user_id,content,created_at 
+        FROM Comment 
+        WHERE article_id=? 
+        AND reply_id=0 
+        ORDER BY created_at DESC
+        LIMIT ?,?;`
+        let sqlCount = `SELECT 
+        COUNT(*) as count 
+        FROM Comment 
+        WHERE article_id=? 
+        AND reply_id=0;`
+        return Promise.all([super.query(sqlList, [articleId, start, size]),
+        super.query(sqlCount, [[articleId]])])
+    }
+
+    static getComments(timeStart, timeEnd, start, size) {
+        let sqlList = `SELECT 
         a.title AS article_title,
-        c.id,c.article_id,c.reply_id,c.user_id,c.avatar,c.content,c.created_at 
-        FROM Comment c JOIN Article a ON a.id=c.article_id WHERE c.created_at BETWEEN ? AND ?
-        ORDER BY created_at DESC;`
-        return super.query(GET_COMMENTS, [timeStart, timeEnd])
+        c.id,c.article_id,c.reply_id,c.user_id,
+        c.content,c.created_at 
+        FROM Comment c JOIN Article a 
+        ON a.id=c.article_id 
+        WHERE (c.created_at BETWEEN ? AND ?)
+        AND reply_id=0 
+        ORDER BY created_at DESC
+        LIMIT ?,?;`
+        let sqlCount = `SELECT 
+        COUNT(*) as count 
+        FROM Comment 
+        WHERE (created_at BETWEEN ? AND ?)
+        AND reply_id=0;`
+        return Promise.all([super.query(sqlList, [timeStart, timeEnd, start, size]),
+        super.query(sqlCount, [timeStart, timeEnd])])
+    }
+
+    static getReplyComments(replyIds) {
+        let symbol = ''
+        for (let i = 0; i < replyIds.length; i++) {
+            symbol += '?,'
+        }
+        symbol = symbol.substring(0, symbol.length - 1)
+        let sql = `SELECT id,article_id,reply_id,user_id,
+        content,created_at 
+        FROM Comment 
+        WHERE reply_id in (${symbol});`
+        return super.query(sql, replyIds)
     }
 }
 

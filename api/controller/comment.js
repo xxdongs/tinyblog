@@ -3,18 +3,25 @@ const commentModel = require('../model/comment')
 class CommentController {
 
     static async getArticleComments(ctx, next) {
+        
         let articleId = parseInt(ctx.params.id)
+        let start = parseInt(ctx.request.query.start) || 0
+        let size = parseInt(ctx.request.query.size) || 10
+        console.log('this')
+        console.log(start,size)
         if (!articleId) {
             ctx.status = 400
             return
         }
 
-        let results = await commentModel.getArticleComments(articleId)
-        if (!results || results.length <= 0) {
+        let all = await commentModel.getArticleComments(articleId, start, size)
+        let results = all[0]
+        let count = all[1][0].count
+        if (count <= 0 || !results || results.length <= 0) {
             ctx.status = 404
             return
         }
-        ctx.body = results
+        ctx.body = { results, count }
         ctx.status = 200
     }
 
@@ -22,22 +29,42 @@ class CommentController {
         let body = ctx.request.body
         let timeStart = ctx.request.query.time_start
         let timeEnd = ctx.request.query.time_end
+        let start = parseInt(ctx.request.query.start) || 0
+        let size = parseInt(ctx.request.query.size) || 10
         if (!(timeStart && timeEnd)) {
             ctx.status = 400
             return
         }
-        let results = await commentModel.getComments(timeStart, timeEnd)
-        if (!results || results.length <= 0) {
+        let all = await commentModel.getComments(timeStart, timeEnd, start, size)
+        let results = all[0]
+        let count = all[1][0].count
+        if (count <= 0 || !results || results.length <= 0) {
             ctx.status = 404
             return
         }
-        ctx.body = results
+        ctx.body = { results, count }
         ctx.status = 200
+    }
+
+    static async getReplyComments(ctx, next) {
+        let param = ctx.request.query.reply_ids
+        if (!param) {
+            ctx.status = 400
+            return
+        }
+        let replyIds = param.split(",").map(id => parseInt(id))
+        let results = await commentModel.getReplyComments(replyIds)
+        if (!results || results.length === 0) {
+            ctx.status = 404
+            return
+        }
+        ctx.status = 200
+        ctx.body = { results }
     }
 
     static async addComment(ctx, next) {
         let body = ctx.request.body
-        if (!('article_id' in body && 'content' in body && 'avatar' in body)) {
+        if (!('article_id' in body && 'content' in body)) {
             ctx.status = 400
             return
         }
@@ -68,7 +95,7 @@ class CommentController {
             ctx.status = 404
             return
         }
-        await commentModel.deleteComment('reply_id',commentId)
+        await commentModel.deleteComment('reply_id', commentId)
         ctx.status = 204
     }
 }

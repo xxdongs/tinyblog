@@ -41,7 +41,7 @@
                 :scrollStyle="mdSetting.scrollStyle"
               ></mavon-editor>
             </div>
-            <SubmitComment class="article-comments" :articleId="articleId"></SubmitComment>
+            <SubmitComment class="article-comments" :userId="userId" :articleId="articleId"/>
             <Comments class="article-comments" :articleId="articleId"></Comments>
           </a-list>
         </a-layout-content>
@@ -71,6 +71,9 @@ export default {
     eventBus.$on("onArticleDeleted", () => {
       window.location.href = "/";
     });
+    eventBus.$on("onUserInfoDone", userInfo => {
+      this.userId = userInfo.id;
+    });
   },
   data() {
     return {
@@ -87,7 +90,8 @@ export default {
         heightLight: true
       },
       more: Token.checkToken(),
-      moment
+      moment,
+      userId: 0
     };
   },
   methods: {
