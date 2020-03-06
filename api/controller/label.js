@@ -18,6 +18,20 @@ class LabelController {
         ctx.status = 201
     }
 
+    static async deleteLabel(ctx, next) {
+        let labelId = parseInt(ctx.params.id)
+        if (!labelId) {
+            ctx.status = 400
+            return
+        }
+        let results = await labelModel.deleteLabel(labelId)
+        if (!results || results.affectedRows <= 0) {
+            ctx.status = 404
+            return
+        }
+        ctx.status = 204
+    }
+
     static async getLabels(ctx, next) {
         let results = await labelModel.getAllLabels()
         if (!results || results.length === 0) {

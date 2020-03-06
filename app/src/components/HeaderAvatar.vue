@@ -22,6 +22,7 @@
 import { getInfo } from "@/services/user";
 import { Token } from "@/store";
 import eventBus from "@/common/eventBus";
+import userIcon from "@/assets/user-avatar.svg";
 
 export default {
   name: "HeaderAvatar",
@@ -40,15 +41,15 @@ export default {
     if (this.token) {
       getInfo().then(res => {
         if (res.ok) {
-          this.avatar = res.data.avatar;
-          eventBus.$emit("onUserInfoDone", res.data)
+          if (res.data.avatar) this.avatar = res.data.avatar;
+          eventBus.$emit("onUserInfoDone", res.data);
         }
       });
     }
   },
   data() {
     return {
-      avatar: "",
+      avatar: userIcon,
       inIndex: false,
       token: Token.checkToken()
     };

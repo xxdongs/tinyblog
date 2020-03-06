@@ -3,7 +3,7 @@
     <CustomDatePick v-if="more" class="date-pick"></CustomDatePick>
     <a-list v-if="total > 0" itemLayout="horizontal" :dataSource="allComments">
       <a-list-item slot="renderItem" slot-scope="item">
-        <a-comment :avatar="anonymousIcon">
+        <a-comment :avatar="item.user_id === 0 ? anonymousIcon : userIcon">
           <p slot="content">{{item.content}}</p>
           <a v-if="item.user_id != 0" slot="author">作者</a>
 
@@ -26,7 +26,7 @@
               <a-comment
                 v-for="reply_item in replyComments.filter(e => e.reply_id===item.id)"
                 :key="reply_item.id"
-                :avatar="anonymousIcon"
+                :avatar="reply_item.user_id === 0 ? anonymousIcon : userIcon"
               >
                 <p slot="content">{{reply_item.content}}</p>
                 <a v-if="reply_item.user_id != 0" slot="author">作者</a>
@@ -93,6 +93,7 @@ import config from "@/common/config";
 import { getInfo } from "@/services/user";
 import { Token } from "@/store";
 import anonymousIcon from "@/assets/anonymous-avatar.svg";
+import userIcon from "@/assets/user-avatar.svg";
 import NotFound from "@/components/NotFound";
 
 const startDefault = "1970-01-01";
@@ -115,7 +116,7 @@ export default {
   components: {
     CustomDatePick,
     SubmitComment,
-    NotFound
+    NotFound,
   },
   data() {
     return {
@@ -134,6 +135,7 @@ export default {
       collapseKey: "0",
       userId: 0,
       anonymousIcon,
+      userIcon,
       token: Token.checkToken()
     };
   },
@@ -263,5 +265,8 @@ export default {
 }
 .collapse-panel-style {
   border: 0;
+}
+.selection {
+  margin-top: 12px;
 }
 </style>

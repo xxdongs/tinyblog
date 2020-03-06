@@ -2,13 +2,22 @@ import Http from './http'
 
 export default class Label {
 
-    static async addLabel(name) {
-        let par = { url: '/api/label', data: { label: name } }
-        return await Http.post(par)
+    static async addTag(name) {
+        return await Http.post({
+            url: '/api/label',
+            data: { label: name }
+        })
     }
 
-    static async getAllLabels() {
-        let par = { url: '/api/pub/labels' }
-        return await Http.get(par)
+    static async deletTag(tagId) {
+        return await Http.delete({
+            url: '/api/label/'.concat(tagId)
+        })
+    }
+
+    static async getTags() {
+        return await Http.get({
+            url: '/api/pub/labels'
+        })
     }
 }

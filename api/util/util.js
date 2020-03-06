@@ -1,3 +1,5 @@
+const crypto = require('crypto')
+
 const randomList = function (arr) {
     results = []
     let len = Math.round(Math.random() * (arr.length))
@@ -11,7 +13,25 @@ const randomList = function (arr) {
     return results
 }
 
+const genLogMsg = function (ctx) {
+    let body = ''
+    if (ctx.request.method == 'GET') {
+        body = `Query: ${JSON.stringify(ctx.request.query)}`
+    } else {
+        body = `Body: ${JSON.stringify(ctx.request.body)}`
+    }
+    return `URL: ${ctx.path} Method: ${ctx.request.method} Status: ${ctx.response.status} ${body}`
+}
+
+const md5 = function (text) {
+    let md5 = crypto.createHash('md5')
+    md5.update(text)
+    return md5.digest('hex')
+}
+
 
 module.exports = {
-    randomList
+    randomList,
+    genLogMsg,
+    md5
 }

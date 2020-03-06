@@ -1,5 +1,5 @@
 const userModel = require('../model/user')
-const { md5 } = require('../util/crypto')
+const { md5 } = require('../util/util')
 const jwt = require('jsonwebtoken')
 const config = require('../util/config')
 

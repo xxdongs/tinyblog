@@ -143,7 +143,7 @@ export default {
     getProfile() {
       getInfo().then(res => {
         if (res.ok) {
-          this.avatar = res.data.avatar;
+          if (res.data.avatar) this.avatar = res.data.avatar;
           this.profile.setFieldsValue({
             nickname: res.data.nickname,
             email: res.data.email,

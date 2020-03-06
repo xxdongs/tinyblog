@@ -39,6 +39,7 @@ import Comment from "@/services/comment";
 import eventBus from "@/common/eventBus";
 import { Token } from "@/store";
 import anonymousIcon from "@/assets/anonymous-avatar.svg";
+import userIcon from "@/assets/user-avatar.svg";
 
 export default {
   name: "SubmitComment",
@@ -47,7 +48,7 @@ export default {
       submitting: false,
       content: "",
       token: Token.checkToken(),
-      avatar: anonymousIcon,
+      avatar: this.userId != 0 ? userIcon : anonymousIcon,
       focus: false
     };
   },

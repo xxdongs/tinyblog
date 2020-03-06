@@ -3,7 +3,7 @@
     <a-layout>
       <a-layout style="background: #fff;">
         <a-layout-content class="my-articles">
-          <ArticleList :clickedLabel="clickedLabel"></ArticleList>
+          <ArticleList></ArticleList>
         </a-layout-content>
       </a-layout>
     </a-layout>

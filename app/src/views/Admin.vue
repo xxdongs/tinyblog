@@ -7,6 +7,9 @@
       <a-menu-item key="comment">
         <a-icon type="message" />评论
       </a-menu-item>
+      <a-menu-item key="tag">
+        <a-icon type="tags" />标签
+      </a-menu-item>
       <a-menu-item key="setting">
         <a-icon type="setting" />设置
       </a-menu-item>
@@ -42,6 +45,8 @@ export default {
       this.current = ["article"];
     } else if (name === "setting") {
       this.current = ["setting"];
+    }else if(name === "tag") {
+      this.current = ["tag"];
     }
   },
   methods: {
@@ -54,6 +59,8 @@ export default {
         path = "/admin/comment";
       } else if ("setting" === item.key) {
         path = "/admin/setting";
+      }else if("tag" === item.key) {
+        path = "/admin/tag"
       }
       this.$router.push(path);
     },

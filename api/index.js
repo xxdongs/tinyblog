@@ -2,7 +2,6 @@ const Koa = require('koa')
 const {
     apiRouter,
     userRouter,
-    qiniuRouter,
     labelRouter,
     articleRouter,
     commentRouter,
@@ -30,7 +29,6 @@ app.use(koajwt({
 
 app.use(apiRouter.routes()).use(apiRouter.allowedMethods())
 app.use(userRouter.routes()).use(userRouter.allowedMethods())
-app.use(qiniuRouter.routes()).use(qiniuRouter.allowedMethods())
 app.use(labelRouter.routes()).use(labelRouter.allowedMethods())
 app.use(articleRouter.routes()).use(articleRouter.allowedMethods())
 app.use(commentRouter.routes()).use(commentRouter.allowedMethods())

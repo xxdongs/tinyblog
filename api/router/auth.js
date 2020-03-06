@@ -1,6 +1,5 @@
 const Router = require('koa-router');
 const userController = require('../controller/user')
-const qiniuController = require('../controller/qiniu')
 const labelController = require('../controller/label')
 const articleController = require('../controller/article')
 const commentController = require('../controller/comment')
@@ -22,6 +21,7 @@ const labelRouter = new Router({
     prefix: '/api/label'
 })
 labelRouter.post('/',labelController.addLabel)
+labelRouter.delete('/:id',labelController.deleteLabel)
 
 const articleRouter = new Router({
     prefix: '/api/article'
@@ -38,11 +38,6 @@ const commentRouter = new Router({
 })
 commentRouter.delete('/:id', commentController.deleteComment)
 
-const qiniuRouter = new Router({
-    prefix: '/api/qiniu'
-})
-qiniuRouter.get('/token', qiniuController.token)
-
 const fileRouter = new Router({
     prefix: '/api/file'
 })
@@ -51,7 +46,6 @@ fileRouter.post('/upload', fileController.uploadFile)
 module.exports = {
     apiRouter,
     userRouter,
-    qiniuRouter,
     labelRouter,
     articleRouter,
     commentRouter,

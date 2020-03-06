@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <SelectArticle
+    <Selection
       class="selection"
       @onTypeSelect="onTypeSelect"
       @onPrivacyClick="onPrivacyClick"
       @onTagClick="onTagClick"
       :inAdmin="inAdmin"
-    />
+    ></Selection>
     <a-list v-if="count > 0" itemLayout="vertical" size="large" :dataSource="articles">
       <a-list-item slot="renderItem" slot-scope="item" :key="item.id">
         <template slot="actions">
@@ -24,12 +24,14 @@
           </span>
           <ArticleMore v-if="inAdmin" :articleId="item.id" />
         </template>
+        <template slot="extra">
+          <div v-if="item.labels && item.labels.length > 0">
+            <a-tag v-for="tag in item.labels.split(',')" :key="tag" color="blue">{{ tag }}</a-tag>
+          </div>
+        </template>
         <a-list-item-meta>
           <a slot="title" target="_blank" :href="'/post/'.concat(item.id)">{{item.title}}</a>
         </a-list-item-meta>
-        <div v-if="item.labels && item.labels.length > 0">
-          <a-tag v-for="tag in item.labels.split(',')" :key="tag" color="blue">{{ tag }}</a-tag>
-        </div>
       </a-list-item>
       <a-pagination
         class="article-page"
@@ -49,7 +51,7 @@
 <script>
 import Article from "@/services/article";
 import ArticleMore from "@/components/ArticleMore";
-import SelectArticle from "@/components/SelectArticle";
+import Selection from "@/components/Selection";
 import NotFound from "@/components/NotFound";
 import moment from "moment";
 import { Token } from "@/store";
@@ -60,7 +62,7 @@ export default {
   async created() {
     await this.getArticleList(null);
   },
-  components: { ArticleMore, SelectArticle, NotFound },
+  components: { ArticleMore, Selection, NotFound },
   data() {
     return {
       articles: [],

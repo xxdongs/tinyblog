@@ -72,8 +72,8 @@ const deleteTabels = async function () {
 
 
 // deleteTabels().then(val => genArticles(1))
-// deleteTabels().then(val => genArticles(50))
-deleteTabels().then(val => genArticles(5000))
+deleteTabels().then(val => genArticles(100))
+// deleteTabels().then(val => genArticles(5000))
 // console.log(faker.image.avatar())
 
 // genArticles(100)

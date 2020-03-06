@@ -31,7 +31,7 @@ import Label from "@/services/label";
 export default {
   name: "LabelBind",
   async created() {
-    await this.getAllLabels();
+    await this.getTags();
   },
   data() {
     return {
@@ -60,7 +60,7 @@ export default {
         this.$message.warning("标签不能为空");
         return;
       }
-      let res = await Label.addLabel(this.newTag);
+      let res = await Label.addTag(this.newTag);
       if (res.ok) {
         this.allTags.push({
           id: res.data.id,
@@ -85,8 +85,8 @@ export default {
         }
       }
     },
-    async getAllLabels() {
-      let res = await Label.getAllLabels();
+    async getTags() {
+      let res = await Label.getTags();
       if (res.ok) {
         let results = res.data.results;
         for (let l of results) {

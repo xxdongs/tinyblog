@@ -44,6 +44,11 @@ class LabelModel extends Connection {
         WHERE article_id=?);`
         return super.query(GET_ARTICLE_LABELS, [articleId])
     }
+
+    static deleteLabel(labelId) {
+        let sql = `DELETE FROM Label WHERE id =?;`
+        return super.query(sql, [labelId])
+    }
 }
 
 module.exports = LabelModel

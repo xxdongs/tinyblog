@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-      <h3 class="title">Not Found!</h3>
+      <a-empty class="title" />
   </div>
 </template>
 
@@ -20,7 +20,6 @@ export default {
   height: 100%;
 }
 .title {
-  font-size: 60px;
   padding-top: 100px;
 }
 </style>

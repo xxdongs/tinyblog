@@ -17,6 +17,7 @@ const Editor = () => import('@/views/Editor.vue');
 // const ArticleList = () => import('@/components/ArticleList.vue');
 const Comments = () => import('@/components/Comments.vue');
 const Setting = () => import('@/views/Setting.vue');
+const Tag = () => import('@/views/Tag.vue');
 
 
 Vue.use(Router)
@@ -82,7 +83,16 @@ let router = new Router({
                 meta: {
                     requireAuth: true,
                 }
-            }]
+            },
+            {
+                path: 'tag',
+                component: Tag,
+                name: 'tag',
+                meta: {
+                    requireAuth: true,
+                }
+            }
+        ]
         },
         {
             path: '/editor',
